@@ -1,0 +1,3 @@
+<template>
+    City active!
+</template>
