@@ -10,7 +10,9 @@
   </div>
 </template>
 
-
+<!-- <script setup>
+  import "@fontsource/libre-barcode-39-extended-text";
+</script> -->
 
 <style scoped>
   main
@@ -20,6 +22,7 @@
     padding: 1rem;
     box-sizing: border-box;
     min-height: 100vh;
+    /* font-family: 'Libre Barcode 39 Extended Text'; */
   }
 </style>
 
