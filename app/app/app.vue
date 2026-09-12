@@ -1,9 +1,10 @@
 <template>
   <div>
     <NuxtRouteAnnouncer />
+    <ToastNotification />
     <Nav></Nav>
     <main>
-      <NuxtPage />
+      <NuxtPage :transition="{ name: 'page', mode: 'out-in' }" />
     </main>
     <Footer></Footer>
   </div>
@@ -21,6 +22,21 @@
 </style>
 
 <style>
+  .page-enter-active,
+  .page-leave-active {
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  .page-enter-from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  .page-leave-to {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
   .myBtn::before
   {
     margin-right: 5px;

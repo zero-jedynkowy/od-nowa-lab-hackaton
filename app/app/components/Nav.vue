@@ -58,10 +58,13 @@
 <script setup lang="ts">
     const isMenuOpen = ref(false);
     const { status, signOut } = useAuth();
+    const { showToast } = useToast();
 
     const handleLogout = async () => {
         isMenuOpen.value = false;
-        await signOut({ callbackUrl: '/' });
+        await signOut({ redirect: false });
+        showToast('Wylogowano pomyślnie.', 'primary');
+        await navigateTo('/');
     };
 </script>
 

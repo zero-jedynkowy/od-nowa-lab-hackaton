@@ -10,6 +10,8 @@ const form = reactive({
 const errorMessage = ref('');
 const successMessage = ref('');
 const isSubmitting = ref(false);
+const { showToast } = useToast();
+const { signIn } = useAuth();
 
 const register = async () => {
   errorMessage.value = '';
@@ -17,27 +19,32 @@ const register = async () => {
 
   if (!form.username.trim() || !form.email.trim() || !form.password.trim()) {
     errorMessage.value = 'Wypełnij wszystkie pola.';
+    showToast(errorMessage.value, 'danger');
     return;
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailPattern.test(form.email)) {
     errorMessage.value = 'Podaj poprawny adres e-mail.';
+    showToast(errorMessage.value, 'danger');
     return;
   }
 
   isSubmitting.value = true;
 
   try {
+    const username = form.username.trim();
+    const password = form.password;
+
     const response = await fetch('/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        username: form.username.trim(),
+        username,
         email: form.email.trim(),
-        password: form.password,
+        password,
       }),
     });
 
@@ -47,14 +54,28 @@ const register = async () => {
       throw new Error(data?.message || 'Błąd rejestracji.');
     }
 
-    successMessage.value = data?.message || 'Rejestracja zakończona pomyślnie.';
+    const loginResult = await signIn('credentials', {
+      username,
+      password,
+      redirect: false,
+      callbackUrl: '/',
+    });
+
+    if (loginResult?.error) {
+      throw new Error('Konto utworzone, ale nie udało się zalogować automatycznie.');
+    }
+
+    successMessage.value = 'Konto utworzone i zalogowano pomyślnie.';
+    showToast(successMessage.value, 'success');
     Object.assign(form, {
       username: '',
       email: '',
       password: '',
     });
+    await navigateTo('/');
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : 'Błąd rejestracji.';
+    showToast(errorMessage.value, 'danger');
   } finally {
     isSubmitting.value = false;
   }
