@@ -11,8 +11,6 @@
   </div>
 </template>
 
-
-
 <style scoped>
   main
   {
@@ -21,6 +19,7 @@
     padding: 1rem;
     box-sizing: border-box;
     min-height: 100vh;
+    /* font-family: 'Libre Barcode 39 Extended Text'; */
   }
 </style>
 
