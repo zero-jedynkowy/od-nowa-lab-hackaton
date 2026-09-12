@@ -3,76 +3,38 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { watch, onMounted } from 'vue'
 import 'leaflet/dist/leaflet.css'
 
-const data_base = ref([
-  {
-    id: 1, 
-    name: 'Baza Główna', 
-    lat: 52.3490, 
-    lng: 21.2464, 
-    description: 'Tu kodujemy!', 
-    image: 'https://via.placeholder.com/150'
-  }
-])
-
-let map = null
-let L = null
-let warstwaPinezek = null
-
-const dodajPinezke = (nazwa, lat, lng, opis, zdjecie) => {
-  data_base.value.push({
-    id: Date.now(),
-    name: nazwa,
-    lat: lat,
-    lng: lng,
-    description: opis,
-    image: zdjecie || 'https://via.placeholder.com/150'
-  })
-}
-
-const rysujPinezki = () => {
-  if (!warstwaPinezek) return
-  
-  warstwaPinezek.clearLayers()
-
+const data_base = defineModel({ default: () => [
+  {id: 1, name: 'Pin 1', description: 'Description for Pin 1', lat: 52.3477, lng: 21.2464, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIgC60W2hgcwFvfBw9tRqyMW7cFxKt3ZaVgR3sepdejg&s=10'},
+] })
+let PinStack = null
+const PinRedraw = () => {
+  if (!PinStack) return
+  PinStack.clearLayers()
   data_base.value.forEach((item) => {
     const marker = L.marker([item.lat, item.lng])
     marker.bindPopup(`
       <h3 style="margin: 0 0 5px 0;">${item.name}</h3>
       <p style="margin: 0 0 10px 0;">${item.description}</p>
-      <img src="${item.image}" alt="${item.name}" style="max-width: 100%; border-radius: 4px;">
+      <img src="${item.image}" alt="${item.name}" style="max-width: 100%; height: auto;">
     `)
-    marker.addTo(warstwaPinezek)
+    marker.addTo(PinStack)
   })
 }
 
 watch(data_base, () => {
-  rysujPinezki()
+  PinRedraw()
 }, { deep: true })
 
 onMounted(async () => {
-  const { default: leaflet } = await import('leaflet')
-  L = leaflet
+  const { default: L } = await import('leaflet')
+  const map = L.map('map').setView([52.3477, 21.2464], 14)
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
   
-  map = L.map('map').setView([52.3477, 21.2464], 14)
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; OpenStreetMap'
-  }).addTo(map)
-  
-  warstwaPinezek = L.layerGroup().addTo(map)
-  rysujPinezki()
-  setTimeout(() => {
-    dodajPinezke(
-      "Zrzut zaopatrzenia", 
-      52.3520, 
-      21.2500, 
-      "Paczka dotarła na miejsce!", 
-      "https://via.placeholder.com/150/FF0000/FFFFFF?text=Zrzut"
-    )
-  }, 5000)
+  PinStack = L.layerGroup().addTo(map)
+  PinRedraw()
 })
 </script>
 
@@ -81,6 +43,5 @@ onMounted(async () => {
   width: 100%;
   height: 100vh; 
   margin: 0;
-  padding: 0;
 }
 </style>
