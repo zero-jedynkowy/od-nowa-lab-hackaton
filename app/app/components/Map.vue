@@ -82,4 +82,8 @@ onBeforeUnmount(() => map?.remove())
   gap: 0.35rem;
   min-width: 190px;
 }
+
+:deep(.map-popup .btn-success) {
+  color: #ffffff !important;
+}
 </style>

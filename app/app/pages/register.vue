@@ -138,11 +138,13 @@ const register = async () => {
 
 <style scoped>
 .cool-rectangel {
-  background-color: #f0f0f0;
+  background-color: var(--app-surface, #f0f0f0);
+  color: var(--app-text, #172033);
   border-radius: 15px;
   padding: 30px;
   max-width: 500px;
   margin: 20px auto;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--app-border, #dee2e6);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
 }
 </style>

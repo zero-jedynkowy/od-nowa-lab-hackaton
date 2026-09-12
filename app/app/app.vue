@@ -1,3 +1,17 @@
+<script setup>
+useHead({
+  script: [{
+    innerHTML: `(function () {
+      try {
+        if (localStorage.getItem('dark-mode') === 'true') {
+          document.documentElement.classList.add('dark-mode')
+        }
+      } catch (error) {}
+    })()`,
+  }],
+})
+</script>
+
 <template>
   <div>
     <NuxtRouteAnnouncer />
@@ -28,6 +42,10 @@
 </style>
 
 <style>
+  body {
+    transition: none;
+  }
+
   .page-enter-active,
   .page-leave-active {
     transition: opacity 0.25s ease, transform 0.25s ease;
