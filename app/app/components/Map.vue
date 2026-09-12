@@ -1,88 +1,85 @@
-<template>
-  <div id="map" class="map-container"></div>
-</template>
-
 <script setup>
-import { watch, onMounted } from 'vue'
 import 'leaflet/dist/leaflet.css'
 
-const data_base = defineModel({ default: () => [
-  {
-    id: 1, 
-    name: 'Pin 1', 
-    description: 'Description for Pin 1', 
-    lat: 52.3477, 
-    lng: 21.2464, 
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIgC60W2hgcwFvfBw9tRqyMW7cFxKt3ZaVgR3sepdejg&s=10', 
-    url: 'https://google.com'
-  },
-] })
+const advertisements = defineModel({ default: () => [] })
+const mapElement = ref(null)
+let map
+let leaflet
+let markerLayer
 
-let PinStack = null
-let L = null 
+const escapeHtml = (value = '') => String(value)
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;')
+  .replaceAll('"', '&quot;')
+  .replaceAll("'", '&#039;')
 
-const PinRedraw = () => {
-  if (!PinStack || !L) return 
-  
-  PinStack.clearLayers()
-  
-  data_base.value.forEach((item) => {
-    const marker = L.marker([item.lat, item.lng])
-    const OutterURL = item.url.startsWith('http')
-    const target = OutterURL ? '_blank' : '_self'
+const redrawMarkers = () => {
+  if (!markerLayer || !leaflet) return
+
+  markerLayer.clearLayers()
+  const visibleAdvertisements = advertisements.value.filter((item) => (
+    Number.isFinite(Number(item.latitude)) && Number.isFinite(Number(item.longitude))
+  ))
+
+  visibleAdvertisements.forEach((item) => {
+    const latitude = Number(item.latitude)
+    const longitude = Number(item.longitude)
+    const marker = leaflet.marker([latitude, longitude])
+    const title = escapeHtml(item.name)
+    const category = escapeHtml(item.category)
+    const address = escapeHtml(item.address || 'Brak adresu')
 
     marker.bindPopup(`
-      <div style="display: flex; flex-direction: column; gap: 10px; text-align: center; min-width: 200px; font-family: sans-serif;">
-        <div style="margin-bottom: 5px;">
-          <h3 style="margin: 0 0 5px 0; font-size: 1.4rem; font-weight: bold; color: #2c3e50;">${item.name}</h3>
-          <p style="margin: 0; font-size: 0.95rem; color: #666;">${item.description}</p>
-        </div>
-        
-        <img src="${item.image}" alt="${item.name}" style="width: 100%; height: 130px; object-fit: cover; border-radius: 8px;">
-        
-        <a 
-          id="btn-id-${item.id}" 
-          href="${item.url}" 
-          target="${target}"
-          class="btn btn-success w-100" 
-          style="color: white !important; text-decoration: none; font-weight: bold; padding: 8px 12px; border-radius: 6px; margin-top: 5px; display: block;"
-        >
-          Details
-        </a>
+      <div class="map-popup">
+        <strong>${title}</strong>
+        <span>Kategoria: ${category}</span>
+        <span>${address}</span>
+        <a href="/market/${encodeURIComponent(item.id)}" class="btn btn-success btn-sm">Szczegóły</a>
       </div>
     `)
-
-    marker.on('popupopen', () => {
-      const link = document.getElementById(`btn-id-${item.id}`)
-      if (link && !OutterURL) {
-        link.addEventListener('click', (event) => {
-          navigateTo(item.url)
-        })
-      }
-    })
-
-    marker.addTo(PinStack)
+    marker.addTo(markerLayer)
   })
+
+  if (visibleAdvertisements.length === 1) {
+    map.setView([Number(visibleAdvertisements[0].latitude), Number(visibleAdvertisements[0].longitude)], 16)
+  } else if (visibleAdvertisements.length > 1) {
+    map.fitBounds(visibleAdvertisements.map((item) => [Number(item.latitude), Number(item.longitude)]), { padding: [30, 30] })
+  }
 }
 
-watch(data_base, () => {
-  PinRedraw()
-}, { deep: true })
+watch(advertisements, redrawMarkers, { deep: true })
 
 onMounted(async () => {
-  const { default: leaflet } = await import('leaflet')
-  L = leaflet
-  const map = L.map('map').setView([52.3477, 21.2464], 14)
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)
-  PinStack = L.layerGroup().addTo(map)
-  PinRedraw()
+  const imported = await import('leaflet')
+  leaflet = imported.default
+  map = leaflet.map(mapElement.value).setView([52.3477, 21.2464], 13)
+  leaflet.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors',
+  }).addTo(map)
+  markerLayer = leaflet.layerGroup().addTo(map)
+  redrawMarkers()
 })
+
+onBeforeUnmount(() => map?.remove())
 </script>
+
+<template>
+  <div ref="mapElement" class="map-container"></div>
+</template>
 
 <style scoped>
 .map-container {
   width: 100%;
-  height: 100vh; 
+  height: 70vh;
+  min-height: 480px;
   margin: 0;
+}
+
+:deep(.map-popup) {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 190px;
 }
 </style>

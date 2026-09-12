@@ -20,7 +20,16 @@ const images = computed(() => Array.isArray(advertisement.value?.images) ? adver
       <p>{{ advertisement.description }}</p>
       <p><strong>Telefon:</strong> {{ advertisement.phone }}</p>
       <p><strong>E-mail:</strong> {{ advertisement.email }}</p>
+      <p v-if="advertisement.address"><strong>Lokalizacja:</strong> {{ advertisement.address }}</p>
     </div>
+    <section v-if="advertisement.latitude !== null && advertisement.longitude !== null" class="location-section mb-4">
+      <h2 class="h4">Lokalizacja ogłoszenia</h2>
+      <LocationPreview
+        :latitude="advertisement.latitude"
+        :longitude="advertisement.longitude"
+        :address="advertisement.address"
+      />
+    </section>
     <div v-if="images.length" class="gallery">
       <img v-for="image in images" :key="image" :src="image" :alt="`Zdjęcie ${advertisement.name}`" class="gallery-image">
     </div>

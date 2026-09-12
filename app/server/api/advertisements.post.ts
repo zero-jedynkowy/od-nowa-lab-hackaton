@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client'
 import { mkdir, writeFile } from 'node:fs/promises'
 import { extname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
+import { isWolominCoordinates } from '../utils/wolomin-location'
 
 const prisma = new PrismaClient()
 const MAX_FIELD_LENGTH = 1024
@@ -52,6 +53,11 @@ export default defineEventHandler(async (event) => {
   const category = formFields.get('category')?.trim() || ''
   const phone = formFields.get('phone')?.trim() || ''
   const email = formFields.get('email')?.trim() || ''
+  const address = formFields.get('address')?.trim() || ''
+  const latitudeValue = formFields.get('latitude')
+  const longitudeValue = formFields.get('longitude')
+  const latitude = latitudeValue ? Number(latitudeValue) : null
+  const longitude = longitudeValue ? Number(longitudeValue) : null
   const sociale = {
     fb: formFields.get('sociale.fb') || '',
     ig: formFields.get('sociale.ig') || '',
@@ -61,6 +67,22 @@ export default defineEventHandler(async (event) => {
 
   if (!name || !description || !category || !phone || !email) {
     throw createError({ statusCode: 400, statusMessage: 'Wypełnij wszystkie wymagane pola ogłoszenia.' })
+  }
+
+  if ((latitudeValue || longitudeValue) && (!Number.isFinite(latitude) || !Number.isFinite(longitude))) {
+    throw createError({ statusCode: 400, statusMessage: 'Nieprawidłowe współrzędne lokalizacji.' })
+  }
+
+  if (latitude === null || longitude === null) {
+    throw createError({ statusCode: 400, statusMessage: 'Wybierz lokalizację ogłoszenia na mapie.' })
+  }
+
+  if (!isWolominCoordinates(latitude, longitude)) {
+    throw createError({ statusCode: 400, statusMessage: 'Lokalizacja ogłoszenia musi znajdować się w Wołominie.' })
+  }
+
+  if (address.length > MAX_FIELD_LENGTH) {
+    throw createError({ statusCode: 400, statusMessage: 'Adres może mieć maksymalnie 1024 znaki.' })
   }
 
   const fields = [name, description, category, phone, email, ...socialValues]
@@ -77,7 +99,7 @@ export default defineEventHandler(async (event) => {
   const savedImages = await Promise.all(images.map(saveImage))
 
   const advertisement = await prisma.advertisement.create({
-    data: { name, description, category, phone, email, sociale, logo, banner, images: savedImages, userId },
+    data: { name, description, category, phone, email, sociale, logo, banner, images: savedImages, address: address || null, latitude, longitude, userId },
   })
 
   return { advertisement }

@@ -12,6 +12,27 @@ const emailForm = reactive({ email: '', currentPassword: '' })
 const passwordForm = reactive({ currentPassword: '', newPassword: '', confirmation: '' })
 const { showToast } = useToast()
 
+const refreshAdvertisementsTable = () => {
+  dataTable.value?.clear().rows.add(account.value?.advertisements || []).draw()
+}
+
+const handleAdvertisementAction = async (event) => {
+  const deleteButton = event.target.closest('[data-delete-id]')
+  if (!deleteButton) return
+
+  const id = deleteButton.dataset.deleteId
+  if (!window.confirm('Czy na pewno chcesz usunąć to ogłoszenie?')) return
+
+  try {
+    await $fetch(`/api/advertisements/${id}`, { method: 'DELETE' })
+    showToast('Ogłoszenie zostało usunięte.', 'success')
+    await loadAccount()
+    refreshAdvertisementsTable()
+  } catch (error) {
+    showToast(error?.data?.statusMessage || 'Nie udało się usunąć ogłoszenia.', 'danger')
+  }
+}
+
 const loadAccount = async () => {
   try {
     account.value = await $fetch('/api/account')
@@ -39,7 +60,11 @@ const initializeTable = async () => {
         title: 'Akcje',
         orderable: false,
         searchable: false,
-        render: (id) => `<a class="btn btn-sm btn-outline-success" href="/market/${id}">Szczegóły</a>`,
+        render: (id) => `
+          <a class="btn btn-sm btn-outline-success me-1" href="/market/${id}">Szczegóły</a>
+          <a class="btn btn-sm btn-outline-primary me-1" href="/market/edit/${id}">Edytuj</a>
+          <button class="btn btn-sm btn-outline-danger" type="button" data-delete-id="${id}">Usuń</button>
+        `,
       },
     ],
     language: {
@@ -78,9 +103,13 @@ onMounted(async () => {
   await loadAccount()
   await nextTick()
   await initializeTable()
+  tableElement.value?.addEventListener('click', handleAdvertisementAction)
 })
 
-onBeforeUnmount(() => dataTable.value?.destroy())
+onBeforeUnmount(() => {
+  tableElement.value?.removeEventListener('click', handleAdvertisementAction)
+  dataTable.value?.destroy()
+})
 </script>
 
 <template>

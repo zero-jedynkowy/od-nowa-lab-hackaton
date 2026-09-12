@@ -15,6 +15,7 @@ const form = reactive({
 const logo = ref(null)
 const banner = ref(null)
 const images = ref([])
+const location = reactive({ address: '', latitude: null, longitude: null })
 
 const errorMessage = ref('')
 const isSubmitting = ref(false)
@@ -22,6 +23,13 @@ const { showToast } = useToast()
 
 const submitAdvertisement = async () => {
     errorMessage.value = ''
+
+    if (location.latitude === null || location.longitude === null) {
+        errorMessage.value = 'Wybierz lokalizację ogłoszenia na mapie.'
+        showToast(errorMessage.value, 'danger')
+        return
+    }
+
     isSubmitting.value = true
 
     try {
@@ -34,6 +42,9 @@ const submitAdvertisement = async () => {
         body.append('sociale.fb', form.sociale.fb)
         body.append('sociale.ig', form.sociale.ig)
         body.append('sociale.x', form.sociale.x)
+        body.append('address', location.address)
+        if (location.latitude !== null) body.append('latitude', String(location.latitude))
+        if (location.longitude !== null) body.append('longitude', String(location.longitude))
         if (logo.value) body.append('logo', logo.value)
         if (banner.value) body.append('banner', banner.value)
         images.value.forEach((image) => body.append('images', image))
@@ -47,6 +58,9 @@ const submitAdvertisement = async () => {
         logo.value = null
         banner.value = null
         images.value = []
+        location.address = ''
+        location.latitude = null
+        location.longitude = null
     } catch (error) {
         errorMessage.value = error?.data?.statusMessage || 'Nie udało się dodać ogłoszenia.'
         showToast(errorMessage.value, 'danger')
@@ -117,6 +131,11 @@ const submitAdvertisement = async () => {
             <label for="images" class="form-label">Zdjęcia dodatkowe (maksymalnie 10)</label>
             <input id="images" class="form-control" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple @change="images = Array.from($event.target.files || []).slice(0, 10)">
         </div>
+
+        <fieldset class="mb-3">
+            <legend class="form-label">Lokalizacja ogłoszenia</legend>
+            <LocationPicker v-model="location" />
+        </fieldset>
 
         <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 

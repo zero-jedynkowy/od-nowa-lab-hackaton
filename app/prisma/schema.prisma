@@ -35,6 +35,9 @@ model Advertisement {
   banner      String?
   images      Json     @default("[]")
   sociale     Json     @default("{}")
+  address     String?  @db.VarChar(1024)
+  latitude    Float?
+  longitude   Float?
   userId      String   @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
