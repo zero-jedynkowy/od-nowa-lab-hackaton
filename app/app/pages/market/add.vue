@@ -1,22 +1,44 @@
 <script setup>
-    import { defineModel } from 'vue';
+import { reactive, ref } from 'vue'
 
-    const model = defineModel({
-        type: Object,
-        default: () => ({
-            name: '',
-            phone: '',
-            email: '',
-            description: '',
-            category: 0
+definePageMeta({ middleware: 'auth' })
+
+const form = reactive({
+    name: '',
+    description: '',
+    category: '',
+    phone: '',
+    email: '',
+    sociale: { fb: '', ig: '', x: '' },
+})
+
+const errorMessage = ref('')
+const isSubmitting = ref(false)
+const { showToast } = useToast()
+
+const submitAdvertisement = async () => {
+    errorMessage.value = ''
+    isSubmitting.value = true
+
+    try {
+        await $fetch('/api/advertisements', { method: 'POST', body: form })
+        showToast('Ogłoszenie zostało dodane.', 'success')
+        Object.assign(form, {
+            name: '', description: '', category: '', phone: '', email: '',
+            sociale: { fb: '', ig: '', x: '' },
         })
-    })
-
+    } catch (error) {
+        errorMessage.value = error?.data?.statusMessage || 'Nie udało się dodać ogłoszenia.'
+        showToast(errorMessage.value, 'danger')
+    } finally {
+        isSubmitting.value = false
+    }
+}
 </script>
 
 
 <template>
-    <form>
+    <form @submit.prevent="submitAdvertisement">
 
         <div class="mb-3">
             <h1>Dodaj ogłoszenie</h1>
@@ -24,52 +46,48 @@
 
         <div class="mb-3">
             <label for="name" class="form-label">Nazwa ogłoszenia</label>
-            <input type="text" class="form-control" id="name" aria-describedby="nazwa" v-model="model.name" placeholder="Wpisz nazwę ogłoszenia">
+            <input type="text" class="form-control" id="name" v-model="form.name" placeholder="Wpisz nazwę ogłoszenia" maxlength="1024" required>
         </div>
 
         <div class="mb-3">
             <label for="description" class="form-label">Opis</label>
-            <textarea class="form-control description-field" placeholder="Wpisz opis ogłoszenia" id="description" v-model="model.description"></textarea>
+            <textarea class="form-control description-field" placeholder="Wpisz opis ogłoszenia" id="description" v-model="form.description" maxlength="1024" required></textarea>
         </div>
 
         <div class="mb-3">
             <label for="category" class="form-label">Kategoria</label>
-            <select class="form-select" aria-label="Default select example" id="category" v-model="model.category">
-                <option selected value="0">Wybierz kategorię</option>
-                <option value="1">Gastronomia</option>
-                <option value="2">Rzemiosło</option>
-                <option value="3">Usługi</option>
-                <option value="4">Inne</option>
+            <select class="form-select" id="category" v-model="form.category" required>
+                <option disabled value="">Wybierz kategorię</option>
+                <option value="Gastronomia">Gastronomia</option>
+                <option value="Rzemiosło">Rzemiosło</option>
+                <option value="Usługi">Usługi</option>
+                <option value="Inne">Inne</option>
             </select>
         </div>
 
 
         <div class="mb-3">
             <label for="phone" class="form-label">Telefon</label>
-            <input type="text" class="form-control" id="phone" aria-describedby="telefon" v-model="model.phone" placeholder="Wpisz numer telefonu">
+            <input type="tel" class="form-control" id="phone" v-model="form.phone" placeholder="Wpisz numer telefonu" maxlength="1024" required>
         </div>
 
         <div class="mb-3">
             <label for="email" class="form-label">E-mail</label>
-            <input type="email" class="form-control" id="email" aria-describedby="emailHelp" v-model="model.email" placeholder="Wpisz adres e-mail">
+            <input type="email" class="form-control" id="email" v-model="form.email" placeholder="Wpisz adres e-mail" maxlength="1024" required>
         </div>
 
-        <div class="mb-3">
-            <label for="formFileMultiple" class="form-label">Logo</label>
-            <input class="form-control" type="file" id="formFileMultiple" multiple>
-        </div>
+        <fieldset class="mb-3">
+            <legend class="form-label">Social media</legend>
+            <input v-model="form.sociale.fb" type="url" class="form-control mb-2" placeholder="Facebook" maxlength="1024">
+            <input v-model="form.sociale.ig" type="url" class="form-control mb-2" placeholder="Instagram" maxlength="1024">
+            <input v-model="form.sociale.x" type="url" class="form-control" placeholder="X" maxlength="1024">
+        </fieldset>
 
-        <div class="mb-3">
-            <label for="formFileMultiple" class="form-label">Baner</label>
-            <input class="form-control" type="file" id="formFileMultiple" multiple>
-        </div>
+        <p v-if="errorMessage" class="text-danger">{{ errorMessage }}</p>
 
-        <div class="mb-3">
-            <label for="formFileMultiple" class="form-label">Zdjęcia</label>
-            <input class="form-control" type="file" id="formFileMultiple" multiple>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
+            {{ isSubmitting ? 'Dodawanie...' : 'Dodaj ogłoszenie' }}
+        </button>
     </form>
 </template>
 

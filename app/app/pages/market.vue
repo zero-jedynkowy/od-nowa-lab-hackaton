@@ -1,3 +1,16 @@
+<script setup>
+const route = useRoute()
+const searchInput = ref(String(route.query.search || ''))
+
+const searchAdvertisements = () => {
+    const search = searchInput.value.trim()
+    navigateTo({
+        path: '/market/listings',
+        query: search ? { search } : {},
+    })
+}
+</script>
+
 <template>
 <div>
     <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3">
@@ -17,15 +30,15 @@
                     <NuxtLink to="/market/add" class="nav-link active" aria-current="page">Dodaj ogloszenie</NuxtLink>
                 </li>
             </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Wyszukaj ogloszenie" aria-label="Search"/>
-                    <button class="btn btn-outline-success" type="submit">Search</button>
+                <form class="d-flex" role="search" @submit.prevent="searchAdvertisements">
+                    <input v-model="searchInput" class="form-control me-2" type="search" placeholder="Wyszukaj ogłoszenie" aria-label="Wyszukaj ogłoszenie">
+                    <button class="btn btn-outline-success" type="submit">Szukaj</button>
                 </form>
             </div>
         </div>
     </nav>
 
-    <NuxtPage />
+    <NuxtPage :transition="{ name: 'market-page', mode: 'out-in' }" />
     </div>
 
 
@@ -53,6 +66,21 @@
 </style>
 
 <style>
+    .market-page-enter-active,
+    .market-page-leave-active {
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .market-page-enter-from {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+
+    .market-page-leave-to {
+        opacity: 0;
+        transform: translateY(-0.5rem);
+    }
+
   .myBtn::before
   {
     margin-right: 5px;
