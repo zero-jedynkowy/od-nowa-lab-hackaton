@@ -5,6 +5,9 @@
                 <img src="/Wolomin_herb.png" alt="Wołomin" class="navbar-logo" />
             </NuxtLink>
 
+
+
+
             <button class="navbar-toggler" type="button" @click="isMenuOpen = !isMenuOpen"
                 aria-controls="navbarSupportedContent" :aria-expanded="isMenuOpen" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -22,6 +25,24 @@
                         <NuxtLink to="/city/active" class="nav-link" active-class="active" exact-active-class="active" @click="isMenuOpen = false">Aktywne Miasto</NuxtLink>
                     </li>
                 </ul>
+
+            <div class="accessibility-buttons">
+                    <!-- DARK MODE BUTTON -->
+                <button
+                  class="btn btn-dark-mode"
+                  @click="toggleDarkMode"
+                  :title="isDarkMode ? 'Jasny' : 'Ciemny'"
+                  aria-label="Przełącz tryb ciemny">
+                  <i :class="isDarkMode ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'"></i>
+                </button>
+            </div>
+
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
                 <div class="d-flex gap-2 nav-actions" aria-label="Autoryzacja">
                     <button 
@@ -56,20 +77,67 @@
 </template>
 
 <script setup lang="ts">
-    const isMenuOpen = ref(false);
-    const { status, signOut } = useAuth();
+import { ref, onMounted } from 'vue'
 
-    const handleLogout = async () => {
-        isMenuOpen.value = false;
-        await signOut({ callbackUrl: '/' });
-    };
+const isMenuOpen = ref(false)
+const { status, signOut } = useAuth()
+const isDarkMode = ref(false)
+
+const toggleDarkMode = () => {
+  isDarkMode.value = !isDarkMode.value
+  localStorage.setItem('dark-mode', isDarkMode.value.toString())
+
+  const body = document.body
+  if (isDarkMode.value) {
+    body.style.background = '#1a1a1a'
+    body.style.color = 'white'
+    body.classList.add('dark-mode')
+  } else {
+    body.style.background = 'white'
+    body.style.color = 'black'
+    body.classList.remove('dark-mode')
+  }
+}
+
+const handleLogout = async () => {
+  isMenuOpen.value = false
+  await signOut({ callbackUrl: '/' })
+}
+
+onMounted(() => {
+  isDarkMode.value = localStorage.getItem('dark-mode') === 'true'
+  const body = document.body
+  if (isDarkMode.value) {
+    body.style.background = '#1a1a1a'
+    body.style.color = 'white'
+    body.classList.add('dark-mode')
+  }
+})
 </script>
+
 
 <style scoped>
 .navbar-logo {
     height: 32px;
     width: auto;
     display: block;
+}
+
+.btn-dark-mode {
+    background-color: transparent;
+    border: 2px solid currentColor;
+    color: currentColor;
+    padding: 8px 12px;
+    margin: 0 10px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.btn-dark-mode:hover {
+    background-color: currentColor;
+    color: var(--bs-body-bg);
 }
 
 .navbar-brand {
