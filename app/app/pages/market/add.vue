@@ -17,14 +17,19 @@
 
 <template>
     <form>
+
         <div class="mb-3">
-            <label for="name" class="form-label">Nazwa usługi</label>
-            <input type="text" class="form-control" id="name" aria-describedby="nazwa" v-model="model.name" placeholder="Wpisz nazwę usługi">
+            <h1>Dodaj ogłoszenie</h1>
+        </div>
+
+        <div class="mb-3">
+            <label for="name" class="form-label">Nazwa ogłoszenia</label>
+            <input type="text" class="form-control" id="name" aria-describedby="nazwa" v-model="model.name" placeholder="Wpisz nazwę ogłoszenia">
         </div>
 
         <div class="mb-3">
             <label for="description" class="form-label">Opis</label>
-            <textarea class="form-control description-field" placeholder="Wpisz opis usługi" id="description" v-model="model.description"></textarea>
+            <textarea class="form-control description-field" placeholder="Wpisz opis ogłoszenia" id="description" v-model="model.description"></textarea>
         </div>
 
         <div class="mb-3">
@@ -47,6 +52,21 @@
         <div class="mb-3">
             <label for="email" class="form-label">E-mail</label>
             <input type="email" class="form-control" id="email" aria-describedby="emailHelp" v-model="model.email" placeholder="Wpisz adres e-mail">
+        </div>
+
+        <div class="mb-3">
+            <label for="formFileMultiple" class="form-label">Logo</label>
+            <input class="form-control" type="file" id="formFileMultiple" multiple>
+        </div>
+
+        <div class="mb-3">
+            <label for="formFileMultiple" class="form-label">Baner</label>
+            <input class="form-control" type="file" id="formFileMultiple" multiple>
+        </div>
+
+        <div class="mb-3">
+            <label for="formFileMultiple" class="form-label">Zdjęcia</label>
+            <input class="form-control" type="file" id="formFileMultiple" multiple>
         </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
