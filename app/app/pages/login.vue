@@ -12,6 +12,7 @@ const model = defineModel({
 const errorMessage = ref('')
 const isSubmitting = ref(false)
 const { signIn } = useAuth()
+const { showToast } = useToast()
 
 const submitLogin = async () => {
   const username = model.value.username.trim()
@@ -19,6 +20,7 @@ const submitLogin = async () => {
 
   if (!username || !password) {
     errorMessage.value = 'Wprowadź nazwę użytkownika i hasło.'
+    showToast(errorMessage.value, 'danger')
     return
   }
 
@@ -35,12 +37,15 @@ const submitLogin = async () => {
 
     if (result?.error) {
       errorMessage.value = 'Nieprawidłowa nazwa użytkownika lub hasło.'
+      showToast(errorMessage.value, 'danger')
       return
     }
 
+    showToast('Zalogowano pomyślnie.', 'success')
     await navigateTo('/')
   } catch {
     errorMessage.value = 'Nie udało się zalogować. Spróbuj ponownie.'
+    showToast(errorMessage.value, 'danger')
   } finally {
     isSubmitting.value = false
   }
