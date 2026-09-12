@@ -165,9 +165,10 @@ onBeforeUnmount(() => {
 
 .account-panel {
   padding: 1.25rem;
-  border: 1px solid #dee2e6;
+  border: 1px solid var(--app-border, #dee2e6);
   border-radius: 0.5rem;
-  background: #fff;
+  background: var(--app-surface, #fff);
+  color: var(--app-text, #172033);
 }
 
 .account-panel h2 {

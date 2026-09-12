@@ -12,7 +12,7 @@
           <h5>Szybkie linki</h5>
           <ul class="list-unstyled">
             <li><NuxtLink to="/">Strona główna</NuxtLink></li>
-            <li><NuxtLink to="/market/listings">Kup i sprzedaj</NuxtLink></li>
+            <li><NuxtLink to="/market/listings">Ryneczek</NuxtLink></li>
             <li><NuxtLink to="/city/design">Miasto 2.0</NuxtLink></li>
             <li><NuxtLink to="/city/active">Aktywne Miasto</NuxtLink></li>
           </ul>
@@ -62,10 +62,12 @@
 
 .footer {
   margin-top: auto;
+  background-color: #212529 !important;
+  color: #fff !important;
 }
 
 .footer a {
-  color: #fff;
+  color: #fff !important;
   text-decoration: none;
 }
 

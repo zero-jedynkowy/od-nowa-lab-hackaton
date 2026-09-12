@@ -1,63 +1,142 @@
 <style>
 :root {
-  --bg-color: white;
-  --text-color: black;
-  --border-color: #ccc;
+    --app-bg: #f8fafc;
+    --app-surface: #ffffff;
+    --app-text: #172033;
+    --app-muted: #64748b;
+    --app-border: #dbe2ea;
 }
 
 html.dark-mode {
-  --bg-color: #1a1a1a;
-  --text-color: white;
-  --border-color: #444;
+    --app-bg: #111827;
+    --app-surface: #1f2937;
+    --app-text: #f8fafc;
+    --app-muted: #cbd5e1;
+    --app-border: #475569;
+    color-scheme: dark;
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
+    background-color: var(--app-bg);
+    color: var(--app-text);
   transition: background-color 0.3s, color 0.3s;
 }
 
 /* NAVBAR */
 .navbar {
-  background-color: var(--bg-color) !important;
-  border-bottom: 1px solid var(--border-color);
-  color: var(--text-color) !important;
+    background-color: var(--app-surface) !important;
+    border-bottom: 1px solid var(--app-border);
+    color: var(--app-text) !important;
 }
 
 .nav-link {
-  color: var(--text-color) !important;
+    color: var(--app-text) !important;
 }
 
-/* WSZYSTKIE LINKI */
-a {
-  color: var(--text-color);
+a:not(.btn) {
+    color: inherit;
 }
 
-/* WSZYSTKIE PRZYCISKI */
-button {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  border-color: var(--border-color);
+.card,
+.account-panel,
+.admin-panel,
+.table {
+    background-color: var(--app-surface);
+    color: var(--app-text);
+    border-color: var(--app-border);
 }
 
-/* KARTY */
-.card {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  border-color: var(--border-color);
+html.dark-mode .account-panel .table {
+        --bs-table-bg: var(--app-surface);
+        --bs-table-color: var(--app-text);
+        --bs-table-striped-bg: #273449;
+        --bs-table-striped-color: var(--app-text);
+        --bs-table-hover-bg: #334155;
+        --bs-table-hover-color: var(--app-text);
+        --bs-table-border-color: var(--app-border);
 }
 
-/* FOOTER */
+html.dark-mode .account-panel .dataTables_info,
+html.dark-mode .account-panel .dataTables_length,
+html.dark-mode .account-panel .dataTables_filter {
+        color: var(--app-muted);
+}
+
+html.dark-mode .account-panel .dataTables_wrapper .pagination .page-link {
+    background-color: #273449;
+    border-color: var(--app-border);
+    color: #e2e8f0;
+}
+
+html.dark-mode .account-panel .dataTables_wrapper .pagination .page-link:hover {
+    background-color: #3b4d68;
+    border-color: #64748b;
+    color: #ffffff;
+}
+
+html.dark-mode .account-panel .dataTables_wrapper .pagination .page-item.active .page-link {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #172033;
+    font-weight: 700;
+}
+
+html.dark-mode .account-panel .dataTables_wrapper .pagination .page-item.disabled .page-link {
+    background-color: #1f2937;
+    border-color: #334155;
+    color: #64748b;
+}
+
+html.dark-mode .account-panel .dt-paging .dt-paging-button {
+    background: #273449 !important;
+    border: 1px solid var(--app-border) !important;
+    color: #e2e8f0 !important;
+    border-radius: 0.35rem;
+    margin-left: 0.25rem;
+}
+
+html.dark-mode .account-panel .dt-paging .dt-paging-button:hover {
+    background: #3b4d68 !important;
+    border-color: #64748b !important;
+    color: #ffffff !important;
+}
+
+html.dark-mode .account-panel .dt-paging .dt-paging-button.current {
+    background: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: #172033 !important;
+    font-weight: 700;
+}
+
+html.dark-mode .account-panel .dt-paging .dt-paging-button.disabled,
+html.dark-mode .account-panel .dt-paging .dt-paging-button.disabled:hover {
+    background: #1f2937 !important;
+    border-color: #334155 !important;
+    color: #64748b !important;
+    cursor: not-allowed;
+}
+
+input,
+textarea,
+select {
+    background-color: var(--app-surface) !important;
+    color: var(--app-text) !important;
+    border-color: var(--app-border) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--app-muted) !important;
+    opacity: 1;
+}
+
+.text-body-secondary {
+    color: var(--app-muted) !important;
+}
+
 .footer {
-  background-color: var(--text-color);
-  color: var(--bg-color);
-}
-
-/* FORMY */
-input, textarea, select {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  border-color: var(--border-color);
+    background-color: var(--app-surface) !important;
+    color: var(--app-text) !important;
 }
 </style>
 
@@ -81,7 +160,7 @@ input, textarea, select {
             <div id="navbarSupportedContent" class="navbar-collapse nav-menu" :class="{ 'nav-menu--open  mt-2': isMenuOpen }">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <NuxtLink to="/market/listings" class="nav-link" active-class="active" exact-active-class="active" @click="isMenuOpen = false">Kup i sprzedaj</NuxtLink>
+                        <NuxtLink to="/market/listings" class="nav-link" active-class="active" exact-active-class="active" @click="isMenuOpen = false">Ryneczek</NuxtLink>
                     </li>
                     <li class="nav-item">
                         <NuxtLink to="/city/design" class="nav-link" active-class="active" exact-active-class="active" @click="isMenuOpen = false">Miasto 2.0</NuxtLink>
@@ -110,6 +189,14 @@ input, textarea, select {
             </button>
 
                 <div class="d-flex gap-2 nav-actions" aria-label="Autoryzacja">
+                    <NuxtLink
+                        v-if="status === 'authenticated' && data?.user?.role === 'ADMIN'"
+                        to="/admin"
+                        class="btn btn-outline-warning"
+                        @click="isMenuOpen = false"
+                    >
+                        Panel admina
+                    </NuxtLink>
                     <NuxtLink
                         v-if="status === 'authenticated'"
                         to="/account"
@@ -156,7 +243,7 @@ import { onMounted, ref } from 'vue'
 
 const isMenuOpen = ref(false)
 const isDarkMode = ref(false)
-const { status, signOut } = useAuth()
+const { status, data, signOut } = useAuth()
 const { showToast } = useToast()
 
 const toggleDarkMode = () => {
@@ -199,8 +286,9 @@ onMounted(() => {
 }
 
 .btn-dark-mode:hover {
-    background-color: currentColor;
-    color: var(--bs-body-bg);
+    background-color: transparent;
+    border-color: #ffc107;
+    color: #ffc107;
 }
 
 .navbar-brand {
