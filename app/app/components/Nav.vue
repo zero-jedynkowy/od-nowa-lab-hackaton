@@ -1,3 +1,68 @@
+<style>
+:root {
+  --bg-color: white;
+  --text-color: black;
+  --border-color: #ccc;
+}
+
+html.dark-mode {
+  --bg-color: #1a1a1a;
+  --text-color: white;
+  --border-color: #444;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* NAVBAR */
+.navbar {
+  background-color: var(--bg-color) !important;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color) !important;
+}
+
+.nav-link {
+  color: var(--text-color) !important;
+}
+
+/* WSZYSTKIE LINKI */
+a {
+  color: var(--text-color);
+}
+
+/* WSZYSTKIE PRZYCISKI */
+button {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+/* KARTY */
+.card {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+/* FOOTER */
+.footer {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
+
+/* FORMY */
+input, textarea, select {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+</style>
+
+
+
 <template>
     <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
         <div class="container-fluid">
@@ -87,15 +152,10 @@ const toggleDarkMode = () => {
   isDarkMode.value = !isDarkMode.value
   localStorage.setItem('dark-mode', isDarkMode.value.toString())
 
-  const body = document.body
   if (isDarkMode.value) {
-    body.style.background = '#1a1a1a'
-    body.style.color = 'white'
-    body.classList.add('dark-mode')
+    document.documentElement.classList.add('dark-mode')
   } else {
-    body.style.background = 'white'
-    body.style.color = 'black'
-    body.classList.remove('dark-mode')
+    document.documentElement.classList.remove('dark-mode')
   }
 }
 
@@ -106,11 +166,8 @@ const handleLogout = async () => {
 
 onMounted(() => {
   isDarkMode.value = localStorage.getItem('dark-mode') === 'true'
-  const body = document.body
   if (isDarkMode.value) {
-    body.style.background = '#1a1a1a'
-    body.style.color = 'white'
-    body.classList.add('dark-mode')
+    document.documentElement.classList.add('dark-mode')
   }
 })
 </script>
