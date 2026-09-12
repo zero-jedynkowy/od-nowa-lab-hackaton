@@ -1,7 +1,7 @@
 import { getServerSession } from '#auth'
 import { PrismaClient } from '@prisma/client'
 import { mkdir, writeFile } from 'node:fs/promises'
-import { extname, join } from 'node:path'
+import { extname, join, resolve } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { isWolominCoordinates } from '../utils/wolomin-location'
 
@@ -17,7 +17,7 @@ const saveImage = async (part: { data: Buffer; filename?: string; type?: string 
 
   const extension = extname(part.filename).toLowerCase() || '.jpg'
   const filename = `${randomUUID()}${extension}`
-  const uploadDirectory = join(process.cwd(), 'public', 'uploads')
+  const uploadDirectory = resolve(process.cwd(), process.env.UPLOADS_PATH || './public/uploads')
   await mkdir(uploadDirectory, { recursive: true })
   await writeFile(join(uploadDirectory, filename), part.data)
   return `/uploads/${filename}`

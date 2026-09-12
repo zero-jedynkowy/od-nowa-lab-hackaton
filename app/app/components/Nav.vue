@@ -56,6 +56,21 @@ html.dark-mode .account-panel .table {
         --bs-table-border-color: var(--app-border);
 }
 
+    html.dark-mode .admin-panel .table {
+        --bs-table-bg: var(--app-surface);
+        --bs-table-color: var(--app-text);
+        --bs-table-striped-bg: #273449;
+        --bs-table-striped-color: var(--app-text);
+        --bs-table-hover-bg: #334155;
+        --bs-table-hover-color: var(--app-text);
+        --bs-table-border-color: var(--app-border);
+    }
+
+    html.dark-mode .admin-panel .table thead th {
+        color: #f8fafc;
+        background-color: #172033;
+    }
+
 html.dark-mode .account-panel .dataTables_info,
 html.dark-mode .account-panel .dataTables_length,
 html.dark-mode .account-panel .dataTables_filter {
