@@ -1,17 +1,65 @@
 <script setup>
-    const example = ref({uuid: '125f8ec3-5699-46b1-aacf-985223214f54', title: 'An example item',
-    description: ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi porta dui elit, at maximus metus suscipit a. Nunc sollicitudin nunc non tempus vehicula. Quisque suscipit quam sed dignissim tempus. Vivamus eu porta magna, nec malesuada neque. Cras posuere quam sed ex sodales suscipit. Nullam aliquet fermentum velit et semper. Pellentesque feugiat, purus in aliquam egestas, eros tortor blandit orci, a finibus tellus arcu vitae justo. Aenean eleifend, lorem vitae auctor congue, tellus sem finibus mi, aliquam dignissim mi nunc quis nunc. Praesent molestie molestie metus, id pellentesque ante egestas sit amet. Aliquam pulvinar velit a nunc volutpat bibendum. Aliquam egestas nisi dolor, eget cursus odio tempor vel. Donec laoreet tellus et orci lacinia, in dictum leo molestie. ',
-    createdAt: '11-09-2001, 11:33:00'
+const route = useRoute()
+const items = ref([])
+const page = ref(1)
+const hasMore = ref(true)
+const isLoading = ref(false)
+const loadError = ref('')
+const sentinel = ref(null)
+let observer
+
+const search = computed(() => String(route.query.search || '').trim())
+
+const loadItems = async (reset = false) => {
+  if (isLoading.value || (!hasMore.value && !reset)) return
+
+  if (reset) {
+    page.value = 1
+    hasMore.value = true
+    items.value = []
+  }
+
+  isLoading.value = true
+  loadError.value = ''
+
+  try {
+    const response = await $fetch('/api/advertisements', {
+      query: { page: page.value, limit: 10, search: search.value },
+    })
+
+    items.value.push(...response.items)
+    hasMore.value = response.hasMore
+    page.value += 1
+  } catch {
+    loadError.value = 'Nie udało się pobrać ogłoszeń.'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+watch(search, () => loadItems(true), { immediate: true })
+
+onMounted(() => {
+  observer = new IntersectionObserver((entries) => {
+    if (entries[0]?.isIntersecting) loadItems()
+  }, { rootMargin: '300px' })
+
+  if (sentinel.value) observer.observe(sentinel.value)
 })
 
-
-
+onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 
 <template>
-<MarketItem v-model="example"></MarketItem>
-<MarketItem v-model="example"></MarketItem>
+  <div class="listings-page">
+    <p v-if="!isLoading && !items.length && !loadError" class="text-body-secondary">Brak ogłoszeń.</p>
+    <MarketItem v-for="item in items" :key="item.id" :model-value="item" />
+    <p v-if="loadError" class="text-danger">{{ loadError }}</p>
+    <p v-if="isLoading" class="text-body-secondary text-center py-3">Ładowanie ogłoszeń...</p>
+    <p v-else-if="!hasMore && items.length" class="text-body-secondary text-center py-3">To już wszystkie ogłoszenia.</p>
+    <div ref="sentinel" class="listings-sentinel" aria-hidden="true"></div>
+  </div>
 </template>
 
 <style scoped>

@@ -19,8 +19,24 @@ model User {
 
   accounts      Account[]
   sessions      Session[]
+  advertisements Advertisement[]
 
   @@map("users")
+}
+
+model Advertisement {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(1024)
+  description String   @db.VarChar(1024)
+  category    String   @db.VarChar(1024)
+  phone       String   @db.VarChar(1024)
+  email       String   @db.VarChar(1024)
+  sociale     Json     @default("{}")
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@map("advertisements")
 }
 
 model Account {

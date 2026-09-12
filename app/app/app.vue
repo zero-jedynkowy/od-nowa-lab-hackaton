@@ -6,9 +6,12 @@
     <main>
       <NuxtPage :transition="{ name: 'page', mode: 'out-in' }" />
     </main>
+
     <Footer></Footer>
   </div>
 </template>
+
+
 
 <style scoped>
   main
