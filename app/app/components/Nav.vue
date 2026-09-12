@@ -5,7 +5,10 @@
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Wołomin</a>
+            <NuxtLink to="/" class="navbar-brand">
+                <img src="/Wolomin_herb.png" alt="Wołomin" class="navbar-logo" />
+            </NuxtLink>
+
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
@@ -14,7 +17,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <NuxtLink to="/market" class="nav-link active" aria-current="page">Kup i sprzedaj</NuxtLink>
+                        <NuxtLink to="/market/listings" class="nav-link active" aria-current="page">Kup i sprzedaj</NuxtLink>
                     </li>
                     <li class="nav-item">
                         <NuxtLink to="/city/design" class="nav-link active" aria-current="page">Miasto 2.0</NuxtLink>
@@ -31,3 +34,12 @@
         </div>
     </nav>
 </template>
+
+
+<style>
+.navbar-logo {
+        height: 32px;
+        width: auto;
+        display: block;
+    }
+</style>

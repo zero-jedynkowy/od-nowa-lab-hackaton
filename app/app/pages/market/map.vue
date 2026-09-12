@@ -1,5 +1,5 @@
 <template>
-tekst
+tu dodaj mape lol
 </template>
 
 <style scoped>
