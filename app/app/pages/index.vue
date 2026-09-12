@@ -19,12 +19,9 @@
 
 .hero {
   background-color: #1e293b;
-  color: #fff;
+  color: #a16f6f;
   padding: 3rem 1.5rem;
   text-align: center;
   border-radius: 8px;
 }
 </style>
-
-
-

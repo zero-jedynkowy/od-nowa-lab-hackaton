@@ -5,5 +5,12 @@ export default defineNuxtConfig({
   css: [
     'bootstrap/dist/css/bootstrap.min.css',
     'bootstrap-icons/font/bootstrap-icons.css'
-  ]
+  ],
+  modules: ['@sidebase/nuxt-auth'],
+  auth: {
+    baseURL: '/api/auth',
+    provider: {
+      type: 'authjs'
+    }
+  }
 })
