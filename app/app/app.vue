@@ -5,9 +5,12 @@
     <main>
       <NuxtPage />
     </main>
+
     <Footer></Footer>
   </div>
 </template>
+
+
 
 <style scoped>
   main
