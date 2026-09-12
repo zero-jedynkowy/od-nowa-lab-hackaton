@@ -1,6 +1,6 @@
 <template>
 <div>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary mb-3">
         <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -48,6 +48,7 @@
   --bs-navbar-brand-hover-color:    #ffffff;
 
   background-color: #1e293b !important;
+  border-radius: 8px;
 }
 </style>
 
