@@ -1,0 +1,16 @@
+{
+    "name": "Moje Nuxt Studio",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "nuxt-app",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "Vue.volar",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "nuxtr.nuxtr-vscode"
+            ]
+        }
+    }
+}
