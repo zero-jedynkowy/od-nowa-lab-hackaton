@@ -10,16 +10,16 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div id="navbarSupportedContent" class="navbar-collapse nav-menu" :class="{ 'nav-menu--open': isMenuOpen }">
+            <div id="navbarSupportedContent" class="navbar-collapse nav-menu" :class="{ 'nav-menu--open  mt-2': isMenuOpen }">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <NuxtLink to="/market/listings" class="nav-link active" aria-current="page" @click="isMenuOpen = false">Kup i sprzedaj</NuxtLink>
+                        <NuxtLink to="/market/listings" class="nav-link" active-class="active" exact-active-class="active" @click="isMenuOpen = false">Kup i sprzedaj</NuxtLink>
                     </li>
                     <li class="nav-item">
-                        <NuxtLink to="/city/design" class="nav-link active" aria-current="page" @click="isMenuOpen = false">Miasto 2.0</NuxtLink>
+                        <NuxtLink to="/city/design" class="nav-link" active-class="active" exact-active-class="active" @click="isMenuOpen = false">Miasto 2.0</NuxtLink>
                     </li>
                     <li class="nav-item">
-                        <NuxtLink to="/city/active" class="nav-link active" aria-current="page" @click="isMenuOpen = false">Aktywne Miasto</NuxtLink>
+                        <NuxtLink to="/city/active" class="nav-link" active-class="active" exact-active-class="active" @click="isMenuOpen = false">Aktywne Miasto</NuxtLink>
                     </li>
                 </ul>
 
@@ -60,8 +60,9 @@
     const { status, signOut } = useAuth();
 
     const handleLogout = async () => {
+        isMenuOpen.value = false;
         await signOut({ callbackUrl: '/' });
-    }
+    };
 </script>
 
 <style scoped>
@@ -69,6 +70,10 @@
     height: 32px;
     width: auto;
     display: block;
+}
+
+.navbar-brand {
+    flex-shrink: 0;
 }
 
 .navbar {
@@ -86,6 +91,8 @@
     top: 100%;
     left: 0;
     right: 0;
+    z-index: 1021;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -116,6 +123,7 @@
 .navbar-nav {
     margin: 0;
     padding-top: 0.5rem;
+    flex-direction: column;
 }
 
 .nav-item {
@@ -125,6 +133,7 @@
 .nav-link {
     display: block;
     padding: 0.5rem 0;
+    white-space: nowrap;
 }
 
 .nav-actions {
@@ -156,6 +165,7 @@
         width: auto;
         margin-bottom: 0 !important;
         padding-top: 0;
+        flex-direction: row;
     }
 
     .nav-actions {
