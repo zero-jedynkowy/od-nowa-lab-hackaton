@@ -1,0 +1,9 @@
+.git
+.gitignore
+postgres_data
+app/node_modules
+app/.nuxt
+app/.output
+app/public/uploads
+.env
+npm-debug.log*

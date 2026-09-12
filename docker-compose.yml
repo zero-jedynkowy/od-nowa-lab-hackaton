@@ -1,21 +1,23 @@
-version: '3.8'
 services:
-  # nuxt-app:
-  #   build: 
-  #     context: ./app
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - POSTGRES_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-  #     - AUTH_SECRET=${AUTH_SECRET}
-  #     - AUTH_ORIGIN=${NUXT_BASE_URL}
-  #     - HOST=0.0.0.0 
-  #     - NITRO_HOST=0.0.0.0 
-  #   depends_on:
-  #     - db
-  #   volumes:
-  #     - ./app:/app
-  #     - /app/node_modules
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      POSTGRES_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      AUTH_SECRET: ${AUTH_SECRET}
+      AUTH_ORIGIN: ${NUXT_BASE_URL}
+      HOST: 0.0.0.0
+      NITRO_HOST: 0.0.0.0
+      PORT: 3000
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/public/uploads
 
   db:
     image: postgres:15
@@ -27,4 +29,13 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  postgres_data:
+  uploads:

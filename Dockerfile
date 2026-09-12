@@ -1,9 +1,38 @@
-# FROM node:20-slim
-# RUN corepack enable pnpm
-# WORKDIR /app
-# ENV HOST=0.0.0.0
-# ENV PORT=3000
+FROM node:22-bookworm-slim AS build
 
-# EXPOSE 3000
+WORKDIR /app
 
-# CMD ["pnpm", "dev"]
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends openssl \
+	&& rm -rf /var/lib/apt/lists/*
+
+COPY app/package*.json ./
+RUN npm install --no-audit --no-fund
+
+COPY app ./
+RUN npx prisma generate \
+	&& npm run build
+
+FROM node:22-bookworm-slim AS runtime
+
+WORKDIR /app
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends openssl \
+	&& rm -rf /var/lib/apt/lists/*
+
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV NITRO_HOST=0.0.0.0
+ENV PORT=3000
+
+COPY --from=build /app/.output ./.output
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/package*.json ./
+
+RUN mkdir -p /app/public/uploads
+
+EXPOSE 3000
+
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss=false && node .output/server/index.mjs"]
