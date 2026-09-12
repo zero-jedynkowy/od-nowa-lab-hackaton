@@ -5,6 +5,7 @@
     <div>
       <img src="/Wolomin_herb.png" alt="Herb Wolomina" class="zdjecie"/>
     </div>
+    <p class="text-center">Tu dodamy jakis fajny tekst, ale teraz mi sie nie che. ide jesc picke</p>
   </main>
 </template>
 
@@ -19,7 +20,7 @@
 
 .hero {
   background-color: #1e293b;
-  color: #a16f6f;
+  color: #ffffff;
   padding: 3rem 1.5rem;
   text-align: center;
   border-radius: 8px;
