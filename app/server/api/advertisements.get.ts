@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
     prisma.advertisement.findMany({
       where,
       orderBy: { createdAt: 'desc' },
+      include: { user: { select: { name: true, email: true } } },
       skip: (page - 1) * limit,
       take: limit,
     }),

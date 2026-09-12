@@ -24,6 +24,16 @@
                 </ul>
 
                 <div class="d-flex gap-2 nav-actions" aria-label="Autoryzacja">
+                    <NuxtLink
+                        v-if="status === 'authenticated'"
+                        to="/account"
+                        class="btn btn-outline-primary"
+                        active-class="active"
+                        aria-label="Przejdź do mojego konta"
+                        @click="isMenuOpen = false"
+                    >
+                        Moje konto
+                    </NuxtLink>
                     <button 
                         v-if="status === 'authenticated'" 
                         @click="handleLogout" 
