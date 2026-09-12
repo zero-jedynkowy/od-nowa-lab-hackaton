@@ -5,7 +5,6 @@
     <main>
       <NuxtPage />
     </main>
-
     <Footer></Footer>
   </div>
 </template>
@@ -17,6 +16,7 @@
     margin: 0 auto 0 auto;
     padding: 1rem;
     box-sizing: border-box;
+    min-height: 100vh;
   }
 </style>
 

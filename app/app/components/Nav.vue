@@ -1,32 +1,29 @@
 <template>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
         <div class="container-fluid">
             <NuxtLink to="/" class="navbar-brand">
                 <img src="/Wolomin_herb.png" alt="Wołomin" class="navbar-logo" />
             </NuxtLink>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" @click="isMenuOpen = !isMenuOpen"
+                aria-controls="navbarSupportedContent" :aria-expanded="isMenuOpen" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <div id="navbarSupportedContent" class="navbar-collapse nav-menu" :class="{ 'nav-menu--open': isMenuOpen }">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <NuxtLink to="/market/listings" class="nav-link active" aria-current="page">Kup i sprzedaj</NuxtLink>
+                        <NuxtLink to="/market/listings" class="nav-link active" aria-current="page" @click="isMenuOpen = false">Kup i sprzedaj</NuxtLink>
                     </li>
                     <li class="nav-item">
-                        <NuxtLink to="/city/design" class="nav-link active" aria-current="page">Miasto 2.0</NuxtLink>
+                        <NuxtLink to="/city/design" class="nav-link active" aria-current="page" @click="isMenuOpen = false">Miasto 2.0</NuxtLink>
                     </li>
                     <li class="nav-item">
-                        <NuxtLink to="/city/active" class="nav-link active" aria-current="page">Aktywne Miasto</NuxtLink>
+                        <NuxtLink to="/city/active" class="nav-link active" aria-current="page" @click="isMenuOpen = false">Aktywne Miasto</NuxtLink>
                     </li>
                 </ul>
-                
-                <!-- Sekcja przycisków autoryzacji -->
-                <div class="d-flex gap-2" aria-label="Autoryzacja">
-                    <!-- Widoczne tylko dla ZALOGOWANEGO -->
+
+                <div class="d-flex gap-2 nav-actions" aria-label="Autoryzacja">
                     <button 
                         v-if="status === 'authenticated'" 
                         @click="handleLogout" 
@@ -35,9 +32,8 @@
                     >
                         Wyloguj
                     </button>
-                    
-                    <!-- Widoczne tylko dla NIEZALOGOWANEGO (Gościa) -->
-                    <template v-else-if="status !== 'authenticated'">
+
+                    <template v-else-if="status === 'unauthenticated'">
                         <NuxtLink
                             to="/login"
                             class="btn btn-outline-success"
@@ -60,13 +56,12 @@
 </template>
 
 <script setup lang="ts">
-// Wyciągamy 'status' do warunków v-if oraz 'signOut' do przycisku wylogowania
-const { status, signOut } = useAuth();
+    const isMenuOpen = ref(false);
+    const { status, signOut } = useAuth();
 
-// Funkcja wylogowania - po kliknięciu wyloguje i przeniesie na stronę główną
-const handleLogout = async () => {
-    await signOut({ callbackUrl: '/' });
-}
+    const handleLogout = async () => {
+        await signOut({ callbackUrl: '/' });
+    }
 </script>
 
 <style scoped>
@@ -74,5 +69,99 @@ const handleLogout = async () => {
     height: 32px;
     width: auto;
     display: block;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.navbar > .container-fluid {
+    position: relative;
+}
+
+.nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: var(--bs-body-bg);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 0 1rem 1rem;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transform: translateY(-10px);
+    transition: max-height 0.35s ease, opacity 0.25s ease, transform 0.35s ease;
+}
+
+.nav-menu--open {
+    max-height: 500px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.navbar-nav,
+.nav-actions {
+    width: 100%;
+}
+
+.navbar-nav {
+    margin: 0;
+    padding-top: 0.5rem;
+}
+
+.nav-item {
+    width: 100%;
+}
+
+.nav-link {
+    display: block;
+    padding: 0.5rem 0;
+}
+
+.nav-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+@media (min-width: 992px) {
+    .nav-menu,
+    .nav-menu--open {
+        position: static;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        max-height: none;
+        opacity: 1;
+        pointer-events: auto;
+        overflow: visible;
+        transform: none;
+        box-shadow: none;
+        border: 0;
+        padding: 0;
+        background: transparent;
+        width: 100%;
+    }
+
+    .navbar-nav {
+        width: auto;
+        margin-bottom: 0 !important;
+        padding-top: 0;
+    }
+
+    .nav-actions {
+        width: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-end;
+    }
 }
 </style>
