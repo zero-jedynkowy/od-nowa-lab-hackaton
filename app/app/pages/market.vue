@@ -5,7 +5,7 @@ const searchInput = ref(String(route.query.search || ''))
 const searchAdvertisements = () => {
     const search = searchInput.value.trim()
     navigateTo({
-        path: '/market/listings',
+        path: route.path === '/market/map' ? '/market/map' : '/market/listings',
         query: search ? { search } : {},
     })
 }
@@ -21,10 +21,10 @@ const searchAdvertisements = () => {
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <NuxtLink to="/market/listings" class="nav-link active" aria-current="page">Ogloszenia</NuxtLink>
+                    <NuxtLink :to="{ path: '/market/listings', query: route.query }" class="nav-link active" aria-current="page">Ogloszenia</NuxtLink>
                 </li>
                 <li class="nav-item">
-                    <NuxtLink to="/market/map" class="nav-link active" aria-current="page">Mapa</NuxtLink>
+                    <NuxtLink :to="{ path: '/market/map', query: route.query }" class="nav-link active" aria-current="page">Mapa</NuxtLink>
                 </li>
                 <li class="nav-item">
                     <NuxtLink to="/market/add" class="nav-link active" aria-current="page">Dodaj ogloszenie</NuxtLink>
