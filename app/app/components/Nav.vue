@@ -14,7 +14,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <NuxtLink to="/market" class="nav-link active" aria-current="page">Kup i sprzedaj</NuxtLink>
+                        <NuxtLink to="/market/market" class="nav-link active" aria-current="page">Kup i sprzedaj</NuxtLink>
                     </li>
                     <li class="nav-item">
                         <NuxtLink to="/city/design" class="nav-link active" aria-current="page">Miasto 2.0</NuxtLink>
