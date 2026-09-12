@@ -31,6 +31,9 @@ model Advertisement {
   category    String   @db.VarChar(1024)
   phone       String   @db.VarChar(1024)
   email       String   @db.VarChar(1024)
+  logo        String?
+  banner      String?
+  images      Json     @default("[]")
   sociale     Json     @default("{}")
   userId      String   @map("user_id")
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
